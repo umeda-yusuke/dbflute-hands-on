@@ -3,8 +3,9 @@ import static org.junit.Assert.assertTrue;
 import javax.annotation.Resource;
 
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-public class HandsOn02Test {
+public class HandsOn02Test extends UnitContainerTestCase {
     @Resource
     private MemberBhv memberBhv;
 
