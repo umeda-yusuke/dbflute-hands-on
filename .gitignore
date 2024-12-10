@@ -26,10 +26,6 @@
 /tomcat.*
 
 # DBFlute
-/dbflute_maihamadb
-/mydbflute
 /dbflute-intro.*
 /mydbflute/intro_resources
 
-# application
-/pom.xml
