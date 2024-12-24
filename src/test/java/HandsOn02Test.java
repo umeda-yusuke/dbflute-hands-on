@@ -80,3 +80,49 @@ public class HandsOn02Test extends UnitContainerTestCase {
         });
     }
 }
+
+/* [1on1でのふぉろー] ConditionBeanのコンセプト、目的ドリブン
+
+ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
+	// (紐づいている)会員ステータスのデータを取得
+	cb.setupSelect_MemberStatus(); // select句を設定 => 自然とjoin必要になるので内部で解決される
+	//cb.leftOuterJoin(MemberStatus.class).on(自分カラム=相手カラム); // これが要らない
+
+	// (紐づいている)会員ステータスの表示順が2以上の会員に絞り込む
+	cb.query().queryMemberStatus().setDisplayOrder_GreaterEqual(2);
+	//cb.leftOuterJoin(MemberStatus.class).on(自分カラム=相手カラム); // やっぱりここでも要らない
+});
+
+　↓↓↓ なぜ setupSelect だけでいいのか？
+
+select dfloc.MEMBER_ID as MEMBER_ID
+     , 会員ステータスのカラムを列挙する (=> Javaに持ってくる)
+  from member dfloc
+    inner join member_status dfrel_0 on dfloc.MEMBER_STATUS_CODE = dfrel_0.MEMBER_STATUS_CODE
+ where dfloc.MEMBER_NAME like 'S%' escape '|'
+   and 会員ステータスのカラムで絞り込む
+ order by 会員ステータスのカラムで並び替える
+
+　→ なので、joinというのは他の(抽象度が一つ上がった)目的を満たすために手段(と言って過言ではない)
+　→ なので、ConditionBeanでは、その目的を指定さえしてもらえれば、joinは自動で構築する
+　→ なので、開発者が、目的を指定しつつ、さらにjoinを自分で設定する必要はない
+
+
+// 前提: そもそもSQLのjoinの挙動
+// ただし、"B" のような join だけで絞り込みが発生するようなSQLはあんまり現場では書かない。
+// 少なくともDBFluteとしては推奨してない。(ConditionBeanはそういうSQL書かないようにしている)
+[A] => 20件
+select dfloc.MEMBER_ID as MEMBER_ID
+  from member dfloc
+
+[B] => 3件 (joinをするだけで) (内部結合: inner join)
+select dfloc.MEMBER_ID as MEMBER_ID
+  from member dfloc // 20件
+    inner join member_withdrawal on ... // 会員退会情報 (1 : 0..1) // 3人が退会
+
+[C] => 20件 (外部結合: outer join)
+select dfloc.MEMBER_ID as MEMBER_ID
+  from member dfloc // 20件
+    left outer join member_withdrawal on ... // 会員退会情報 (1 : 0..1) // 3人が退会
+
+*/
