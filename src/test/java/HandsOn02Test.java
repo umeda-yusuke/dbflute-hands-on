@@ -20,8 +20,9 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setMemberName_LikeSearch("S", op -> op.likePrefix());
         });
         // ## Assert ##
-        // TODO umeyan 万が一、テストデータが0件、もしくはActがバグってて検索0件の場合... by jflute (2024/12/17)
+        // TODO done umeyan 万が一、テストデータが0件、もしくはActがバグってて検索0件の場合... by jflute (2024/12/17)
         // このままだと、forEach()が素通りして
+        assertTrue(!members.isEmpty());
         members.forEach(member -> {
             assertTrue(member.getMemberName().startsWith("S"));
         });
@@ -30,10 +31,10 @@ public class HandsOn02Test extends UnitContainerTestCase {
     public void test_会員IDが1の会員を取得する() throws Exception {
         // ## Arrange ##
         // ## Act ##
-    	// TODO umeyan [読み物課題] Optionalの変数名の話 by jflute (2024/12/17)
+    	// TODO done umeyan [読み物課題] Optionalの変数名の話 by jflute (2024/12/17)
     	// https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/select/selectentity.html#optionalname
     	// 良ければ(こだわりがなければ)、optMemberにしてもらえるとわかりやすいかなと。
-        OptionalEntity<Member> member = memberBhv.selectEntity(cb -> {
+        OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
             cb.query().setMemberId_Equal(1);
         });
 
@@ -51,19 +52,19 @@ public class HandsOn02Test extends UnitContainerTestCase {
 		// });
         // 実務だと中途半端に動いて欲しくないので、なかったら例外ですぐ落としたい。
         // でも、例外メッセージはデバッグしやすいものになっていて欲しい。
-        // TODO umeyan [読み物課題] OptionalEntityの使い方 by jflute (2024/12/17)
+        // TODO done umeyan [読み物課題] OptionalEntityの使い方 by jflute (2024/12/17)
         // https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/select/selectentity.html#optionalhandling
         
         // ## Assert ##
-        // TODO umeyan (int)のダウンキャストはなくても動くようにしています by jflute (2024/12/17)
+        // TODO done umeyan (int)のダウンキャストはなくても動くようにしています by jflute (2024/12/17)
         // assertEquals(int expected, Integer actual) というメソッドがあるので
-		assertEquals(1, (int) member.get().getMemberId());
+		assertEquals(1, optMember.get().getMemberId());
 		
 		// [1on1でのフォロー] 改めてNotNull制約の話をした。
 		// ぼくらは「値がない」という状態とどう付き合うか？付き合い方に選択肢があって良し悪しがある。
     }
 
-    // TODO umeyan [事務連絡] 模範解答的な実装は、最初から見ちゃうとトレーニングが薄くなるけど... by jflute (2024/12/17)
+    // TODO done umeyan [事務連絡] 模範解答的な実装は、最初から見ちゃうとトレーニングが薄くなるけど... by jflute (2024/12/17)
     // 少し自力で頑張ってぐぬぬとなったらチラ見するとか...
     // 実装できた後に模範解答的な実装と見比べて「あー、なるほど」とかの学びにするとか...
     // そういう感じで使ってもらえればと思います。
