@@ -53,4 +53,24 @@ public class HandsOn03Test extends UnitContainerTestCase {
             assertTrue(member.getMemberSecurityAsOne().get().getReminderQuestion().contains("2"));
         });
     }
+
+    public void test_会員ステータスの表示順カラムで会員を並べて検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Member> members = memberBhv.selectList(cb -> {
+            cb.query().addOrderBy_MemberStatusCode_Asc();
+        });
+        // ## Assert ##
+        for (int i = 0; i < members.size() - 1; i++) {
+            String currentStatusCode = members.get(i).getMemberStatusCode();
+            String nextStatusCode = members.get(i + 1).getMemberStatusCode();
+            assertTrue(currentStatusCode.compareTo(nextStatusCode) <= 0);
+        }
+    }
+
+    public void test_生年月日が存在する会員の購入を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        // ## Assert ##
+    }
 }
