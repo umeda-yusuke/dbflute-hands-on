@@ -7,7 +7,11 @@ import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO umeyan javatryと同じく、authorだけでもJavaDocをお願いします by jflute (2024/12/17)
+// TODO done umeyan javatryと同じく、authorだけでもJavaDocをお願いします by jflute (2024/12/17)
+/**
+ * The test of hands-on for basic select. (simple cases)
+ * @author umeyan
+ */
 public class HandsOn02Test extends UnitContainerTestCase {
 
     @Resource
