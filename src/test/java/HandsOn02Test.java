@@ -26,7 +26,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
         // ## Assert ##
         // TODO done umeyan 万が一、テストデータが0件、もしくはActがバグってて検索0件の場合... by jflute (2024/12/17)
         // このままだと、forEach()が素通りして
-        assertTrue(!members.isEmpty());
+        assertFalse(members.isEmpty());
         members.forEach(member -> {
             assertTrue(member.getMemberName().startsWith("S"));
         });
