@@ -7,7 +7,7 @@ import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO done umeyan javatryと同じく、authorだけでもJavaDocをお願いします by jflute (2024/12/17)
+// done umeyan javatryと同じく、authorだけでもJavaDocをお願いします by jflute (2024/12/17)
 /**
  * The test of hands-on for basic select. (simple cases)
  * @author umeyan
@@ -24,7 +24,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setMemberName_LikeSearch("S", op -> op.likePrefix());
         });
         // ## Assert ##
-        // TODO done umeyan 万が一、テストデータが0件、もしくはActがバグってて検索0件の場合... by jflute (2024/12/17)
+        // done umeyan 万が一、テストデータが0件、もしくはActがバグってて検索0件の場合... by jflute (2024/12/17)
         // このままだと、forEach()が素通りして
         assertFalse(members.isEmpty());
         members.forEach(member -> {
@@ -35,7 +35,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
     public void test_会員IDが1の会員を取得する() throws Exception {
         // ## Arrange ##
         // ## Act ##
-    	// TODO done umeyan [読み物課題] Optionalの変数名の話 by jflute (2024/12/17)
+    	// done umeyan [読み物課題] Optionalの変数名の話 by jflute (2024/12/17)
     	// https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/select/selectentity.html#optionalname
     	// 良ければ(こだわりがなければ)、optMemberにしてもらえるとわかりやすいかなと。
         OptionalEntity<Member> optMember = memberBhv.selectEntity(cb -> {
@@ -56,11 +56,11 @@ public class HandsOn02Test extends UnitContainerTestCase {
 		// });
         // 実務だと中途半端に動いて欲しくないので、なかったら例外ですぐ落としたい。
         // でも、例外メッセージはデバッグしやすいものになっていて欲しい。
-        // TODO done umeyan [読み物課題] OptionalEntityの使い方 by jflute (2024/12/17)
+        // done umeyan [読み物課題] OptionalEntityの使い方 by jflute (2024/12/17)
         // https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/select/selectentity.html#optionalhandling
         
         // ## Assert ##
-        // TODO done umeyan (int)のダウンキャストはなくても動くようにしています by jflute (2024/12/17)
+        // done umeyan (int)のダウンキャストはなくても動くようにしています by jflute (2024/12/17)
         // assertEquals(int expected, Integer actual) というメソッドがあるので
 		assertEquals(1, optMember.get().getMemberId());
 		
@@ -68,7 +68,7 @@ public class HandsOn02Test extends UnitContainerTestCase {
 		// ぼくらは「値がない」という状態とどう付き合うか？付き合い方に選択肢があって良し悪しがある。
     }
 
-    // TODO done umeyan [事務連絡] 模範解答的な実装は、最初から見ちゃうとトレーニングが薄くなるけど... by jflute (2024/12/17)
+    // done umeyan [事務連絡] 模範解答的な実装は、最初から見ちゃうとトレーニングが薄くなるけど... by jflute (2024/12/17)
     // 少し自力で頑張ってぐぬぬとなったらチラ見するとか...
     // 実装できた後に模範解答的な実装と見比べて「あー、なるほど」とかの学びにするとか...
     // そういう感じで使ってもらえればと思います。
@@ -80,6 +80,8 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setBirthdate_IsNull();
         });
         // ## Assert ##
+        // TODO umeyan 素通り防止: (今後ずっと同じなので以降のセクションもお願いします) by jflute (2025/01/07)
+        // assertHasAnyElement(members); を使ってください。assH で補完できる。
         members.forEach(member -> {
             assertNull(member.getBirthdate());
         });

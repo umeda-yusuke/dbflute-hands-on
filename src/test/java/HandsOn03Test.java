@@ -9,6 +9,10 @@ import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
+// TODO umeyan 不要なimport文の削除をお願い by jflute (2025/01/07)
+// TODO umeyan セクション2と同じようにjavadocお願い by jflute (2025/01/07)
+// TODO umeyan testクラスのpackageがdefault packageになっちゃってるので、要件通りの場所に移動してください by jflute (2025/01/07)
+
 public class HandsOn03Test extends UnitContainerTestCase {
     @Resource
     private MemberBhv memberBhv;
@@ -33,14 +37,35 @@ public class HandsOn03Test extends UnitContainerTestCase {
         List<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
+            // TODO umeyan "若い順で並べる" をお願いします by jflute (2025/01/07)
         });
+        // [1on1でのふぉろー]
+        // MEMBER_SECURITYの方:
+        // 1:1でも
+        //  1:必ず存在する1
+        //  1:いないかもしれない1
+        // というのがある。
+        // (個人的にはファーストレベル、セカンドレベルのカーディナリティと呼んでいる)
+        //
+        // MEMBER_STATUSの方:
+        // n:1になるけれども、こっちは物理制約がある
+        // NotNull制約、かつ、FK制約
+        // 
+        // リレーションシップ線はFK制約なので物理制約だけど、黒丸は人間の決め事(業務制約)
+        //
         // ## Assert ##
         members.forEach(member -> {
             assertTrue(member.getMemberStatus().isPresent());
             assertTrue(member.getMemberSecurityAsOne().isPresent());
         });
+        
+        // [1on1でのふぉろー] サロゲートキーの話
+        // http://dbflute.seasar.org/ja/manual/topic/dbdesign/surrogatekey.html
+        // もし、突っ込んでみたかったら読んでみて。
     }
 
+    // TODO umeyan サブ要件を読んで改めて実装を進めてみてください by jflute (2025/01/07)
+    
     public void test_会員セキュリティ情報のリマインダ質問で2という文字が含まれている会員を検索する() {
         // ## Arrange ##
         // ## Act ##
@@ -70,6 +95,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
     public void test_生年月日が存在する会員の購入を検索する() {
         // ## Arrange ##
+    	// TODO umeyan ConditionBeanの目的ドリブンの「1個目のステップ」を確認し直してみてください by jflute (2025/01/07)
+    	// https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/about.html#purpose
+    	
         // ## Act ##
         // ## Assert ##
     }
