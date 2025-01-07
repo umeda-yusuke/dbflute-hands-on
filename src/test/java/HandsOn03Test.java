@@ -73,4 +73,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Act ##
         // ## Assert ##
     }
+
+    public void test_2005年10月の1日から3日までに正式会員になった会員を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Member> members = memberBhv.selectList(cb -> {
+            cb.query().setFormalizedDatetime_FromTo(toLocalDateTime("2005-10-01"), toLocalDateTime("2005-10-03"), op -> op.compareAsMonth());
+        });
+        // ## Assert ##
+        members.forEach(member -> {
+            assertTrue(member.getFormalizedDatetime().isAfter(toLocalDateTime("2005-09-30")));
+            assertTrue(member.getFormalizedDatetime().isBefore(toLocalDateTime("2005-10-04")));
+        });
+    }
 }
