@@ -41,7 +41,16 @@ public class HandsOn03Test extends UnitContainerTestCase {
         List<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
-            // TODO done umeyan "若い順で並べる" をお願いします by jflute (2025/01/07)
+            // done umeyan "若い順で並べる" をお願いします by jflute (2025/01/07)
+            //
+            // [1on1でのふぉろー]
+            // DBMSによって、nullのデータが先に並ぶのか？後に並ぶのか？変わってくる。
+            // なので、基本的には null のデータを曖昧にする order by にしないほうが無難。
+            //
+            // Oracle, PostgreSQL とかだと nulls first/last っていうSQL文法があります。
+            // MySQLはないので、case when で代用する。DBMSによってSQLの文法がちょっと違う。
+            //
+            // TODO umeyan 若い順になってない by jflute (2025/01/14)
             cb.query().addOrderBy_Birthdate_Asc();
             cb.query().addOrderBy_MemberId_Asc();
         });
@@ -62,6 +71,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         members.forEach(member -> {
+        	log(member.getMemberName(), member.getBirthdate());
             assertTrue(member.getMemberStatus().isPresent());
             assertTrue(member.getMemberSecurityAsOne().isPresent());
         });
