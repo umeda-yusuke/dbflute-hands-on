@@ -92,6 +92,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
             cb.query().addOrderBy_MemberStatusCode_Asc();
+            cb.query().addOrderBy_MemberId_Desc();
         });
         // ## Assert ##
         assertHasAnyElement(members);
