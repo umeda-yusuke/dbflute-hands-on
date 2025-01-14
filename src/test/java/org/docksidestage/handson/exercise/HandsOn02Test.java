@@ -1,3 +1,5 @@
+package org.docksidestage.handson.exercise;
+
 import java.util.List;
 
 import javax.annotation.Resource;
