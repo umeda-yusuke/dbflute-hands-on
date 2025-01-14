@@ -28,6 +28,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setBirthdate_LessEqual(toLocalDate("1968-01-01"));
         });
         // ## Assert ##
+        assertHasAnyElement(members);
         members.forEach(member -> {
             assertTrue(member.getMemberName().startsWith("S"));
             assertTrue(member.getBirthdate().isBefore(toLocalDate("1968-01-02")));
@@ -57,6 +58,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // リレーションシップ線はFK制約なので物理制約だけど、黒丸は人間の決め事(業務制約)
         //
         // ## Assert ##
+        assertHasAnyElement(members);
         members.forEach(member -> {
             assertTrue(member.getMemberStatus().isPresent());
             assertTrue(member.getMemberSecurityAsOne().isPresent());
@@ -77,6 +79,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().queryMemberSecurityAsOne().setReminderQuestion_LikeSearch("2", op -> op.likeContain());
         });
         // ## Assert ##
+        assertHasAnyElement(members);
         members.forEach(member -> {
             assertTrue(member.getMemberSecurityAsOne().get().getReminderQuestion().contains("2"));
         });
@@ -89,6 +92,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().addOrderBy_MemberStatusCode_Asc();
         });
         // ## Assert ##
+        assertHasAnyElement(members);
         for (int i = 0; i < members.size() - 1; i++) {
             String currentStatusCode = members.get(i).getMemberStatusCode();
             String nextStatusCode = members.get(i + 1).getMemberStatusCode();
@@ -112,6 +116,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setFormalizedDatetime_FromTo(toLocalDateTime("2005-10-01"), toLocalDateTime("2005-10-03"), op -> op.compareAsMonth());
         });
         // ## Assert ##
+        assertHasAnyElement(members);
         members.forEach(member -> {
             assertTrue(member.getFormalizedDatetime().isAfter(toLocalDateTime("2005-09-30")));
             assertTrue(member.getFormalizedDatetime().isBefore(toLocalDateTime("2005-10-04")));

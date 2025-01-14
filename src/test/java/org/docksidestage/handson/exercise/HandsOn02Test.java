@@ -82,8 +82,8 @@ public class HandsOn02Test extends UnitContainerTestCase {
             cb.query().setBirthdate_IsNull();
         });
         // ## Assert ##
-        // TODO umeyan 素通り防止: (今後ずっと同じなので以降のセクションもお願いします) by jflute (2025/01/07)
-        // assertHasAnyElement(members); を使ってください。assH で補完できる。
+        // TODO done umeyan 素通り防止: (今後ずっと同じなので以降のセクションもお願いします) by jflute (2025/01/07)
+        assertHasAnyElement(members);
         members.forEach(member -> {
             assertNull(member.getBirthdate());
         });
