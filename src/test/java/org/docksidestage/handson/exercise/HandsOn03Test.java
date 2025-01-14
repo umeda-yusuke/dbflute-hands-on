@@ -82,15 +82,19 @@ public class HandsOn03Test extends UnitContainerTestCase {
     }
 
     // TODO umeyan サブ要件を読んで改めて実装を進めてみてください by jflute (2025/01/07)
+    // javadocにハンズオンのページの検索要件をコピーして持ってくると楽です。
     
     public void test_会員セキュリティ情報のリマインダ質問で2という文字が含まれている会員を検索する() {
         // ## Arrange ##
         // ## Act ##
+    	// [1on1での質問] "会員セキュリティ情報のデータ自体は要らない" の話
+    	// [1on1ふぉろー] セクション2のConditionBeanのコンセプト、目的ドリブンの話を再度じっくりした。
         List<Member> members = memberBhv.selectList(cb -> {
-            cb.setupSelect_MemberSecurityAsOne();
             cb.query().queryMemberSecurityAsOne().setReminderQuestion_LikeSearch("2", op -> op.likeContain());
         });
         // ## Assert ##
+        // [1on1ふぉろー] テスト対象のプログラムが戻すデータですべてアサートが満たせるとは限らない。
+        // ので、Assertの中でアサートに必要なデータを自分でかき集めてきても良い。
         assertHasAnyElement(members);
         members.forEach(member -> {
             assertTrue(member.getMemberSecurityAsOne().get().getReminderQuestion().contains("2"));
