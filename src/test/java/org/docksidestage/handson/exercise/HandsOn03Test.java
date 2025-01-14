@@ -8,9 +8,9 @@ import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
-// TODO done umeyan 不要なimport文の削除をお願い by jflute (2025/01/07)
-// TODO done umeyan セクション2と同じようにjavadocお願い by jflute (2025/01/07)
-// TODO done umeyan testクラスのpackageがdefault packageになっちゃってるので、要件通りの場所に移動してください by jflute (2025/01/07)
+// done umeyan 不要なimport文の削除をお願い by jflute (2025/01/07)
+// done umeyan セクション2と同じようにjavadocお願い by jflute (2025/01/07)
+// done umeyan testクラスのpackageがdefault packageになっちゃってるので、要件通りの場所に移動してください by jflute (2025/01/07)
 
 /**
  * The test of hands-on for basic select. (simple cases)
