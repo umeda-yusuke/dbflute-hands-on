@@ -41,7 +41,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         List<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberStatus();
             cb.setupSelect_MemberSecurityAsOne();
-            // TODO umeyan "若い順で並べる" をお願いします by jflute (2025/01/07)
+            // TODO done umeyan "若い順で並べる" をお願いします by jflute (2025/01/07)
+            cb.query().addOrderBy_Birthdate_Asc();
+            cb.query().addOrderBy_MemberId_Asc();
         });
         // [1on1でのふぉろー]
         // MEMBER_SECURITYの方:
