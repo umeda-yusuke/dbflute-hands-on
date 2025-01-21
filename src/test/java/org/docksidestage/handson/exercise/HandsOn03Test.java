@@ -1,14 +1,19 @@
 package org.docksidestage.handson.exercise;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.dbflute.cbean.result.ListResultBean;
 import org.docksidestage.handson.dbflute.cbean.MemberCB;
 import org.docksidestage.handson.dbflute.cbean.PurchaseCB;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.dbflute.exbhv.MemberSecurityBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
+import org.docksidestage.handson.dbflute.exentity.MemberSecurity;
 import org.docksidestage.handson.dbflute.exentity.Purchase;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
@@ -56,9 +61,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // Oracle, PostgreSQL とかだと nulls first/last っていうSQL文法があります。
             // MySQLはないので、case when で代用する。DBMSによってSQLの文法がちょっと違う。
             //
-            // TODO done umeyan 若い順になってない by jflute (2025/01/14)
+            // done umeyan 若い順になってない by jflute (2025/01/14)
             cb.query().addOrderBy_Birthdate_Desc().withNullsLast();
             cb.query().addOrderBy_MemberId_Asc();
+            // TODO umeyan 要件を変えたとしても、birthdateがnotnullのものだけに絞るなら NullsLast が不要になる by jflute (2025/01/21)
+            // TODO umeyan cbの呼び出し順序の慣習として、select句、where句、order by句... by jflute (2025/01/21)
+            // というのがオススメなので、このIsNotNullは、order byよりも前に持っていってくれると嬉しいです。
             cb.query().setBirthdate_IsNotNull();
         });
         // [1on1でのふぉろー]
@@ -88,7 +96,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // もし、突っ込んでみたかったら読んでみて。
     }
 
-    // TODO done umeyan サブ要件を読んで改めて実装を進めてみてください by jflute (2025/01/07)
+    @Resource
+	private MemberSecurityBhv memberSecurityBhv;
+    // done umeyan サブ要件を読んで改めて実装を進めてみてください by jflute (2025/01/07)
     // javadocにハンズオンのページの検索要件をコピーして持ってくると楽です。
     /**
      * 会員セキュリティ情報のデータ自体は要らない
@@ -113,14 +123,40 @@ public class HandsOn03Test extends UnitContainerTestCase {
         });
         assertHasAnyElement(members);
         assertEquals(reminderQuestion2Members.size(), members.size());
+        // done umeyan [思考エクササイズ] 超厳密には、order byを入れていないselectの結果の順序は保証されない by jflute (2025/01/21)
+        // このやり方で本気でそこも配慮するなら、順序は気にせず組み合わせとして会員のセットが同じであることをアサートするといいのかもしれない。
         for (int i = 0; i < members.size(); i++) {
             assertEquals(reminderQuestion2Members.get(i).getMemberName(), members.get(i).getMemberName());
         }
+        
+        // [1on1でのふぉろー] jfluteライブコーディング
+        //ListResultBean<MemberSecurity> securityList = memberSecurityBhv.selectList(cb -> {
+        //	Collection<Integer> memberIdList = members.stream().map(mb -> {
+        //		return mb.getMemberId();
+        //	}).collect(Collectors.toList());
+        //	cb.query().setMemberId_InScope(memberIdList);
+        //});
+        //assertHasAnyElement(securityList);
+        //assertEquals(members.size(), securityList.size());
+        //for (Member member : members) {
+        //	boolean hasSecurity = false;
+        //	for (MemberSecurity security : securityList) {
+        //		if (member.getMemberId().equals(security.getMemberId())) {
+        //			assertTrue(security.getReminderQuestion().contains("2"));
+        //			hasSecurity = true;
+        //		}
+        //	}
+        //	assertTrue(hasSecurity);
+        //}
+        
+        // [1on1でのふぉろー]
+        // 模範解答的な実装を一緒に見て、いろいろなやり方を学んだ。
     }
 
     public void test_会員ステータスの表示順カラムで会員を並べて検索する() {
         // ## Arrange ##
         // ## Act ##
+    	// TODO umeyan [最後に修正でOK] "会員ステータスの表示順カラム" なので、会員ステータスコードで並べるわけではない by jflute (2025/01/21)
         List<Member> members = memberBhv.selectList(cb -> {
             cb.query().addOrderBy_MemberStatusCode_Asc();
             cb.query().addOrderBy_MemberId_Desc();
@@ -128,8 +164,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         for (int i = 0; i < members.size() - 1; i++) {
+        	// TODO umeyan [いいね] 変数名がわかりやすい、current, next by jflute (2025/01/21)
             String currentStatusCode = members.get(i).getMemberStatusCode();
             String nextStatusCode = members.get(i + 1).getMemberStatusCode();
+            // TODO umeyan 厳密には、一種類の会員ステータスしか検索されなかった場合に、アサートしたいことが成り立たない by jflute (2025/01/21)
+            // "<=" の "<" の部分で成り立った assertTrue() が一回以上あることを保証したい。
             assertTrue(currentStatusCode.compareTo(nextStatusCode) <= 0);
         }
     }
@@ -142,13 +181,14 @@ public class HandsOn03Test extends UnitContainerTestCase {
      */
     public void test_生年月日が存在する会員の購入を検索する() {
         // ## Arrange ##
-    	// TODO done umeyan ConditionBeanの目的ドリブンの「1個目のステップ」を確認し直してみてください by jflute (2025/01/07)
+    	// done umeyan ConditionBeanの目的ドリブンの「1個目のステップ」を確認し直してみてください by jflute (2025/01/07)
     	// https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/about.html#purpose
         // ## Act ##
         List<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.query().queryMember().setBirthdate_IsNotNull();
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Product();
+            // TODO umeyan order byの要件を見直し (改めて指差し確認大事) by jflute (2025/01/21)
             cb.query().addOrderBy_PurchaseDatetime_Desc();
             cb.query().queryProduct().addOrderBy_ProductId_Asc();
             cb.query().queryProduct().addOrderBy_ProductId_Asc();
@@ -156,6 +196,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
+        	// TODO umeyan memberは3回も使われてget/getで横長になっているので変数に抽出してください by jflute (2025/01/21)
+        	// IntelliJのショートカットでぜひやってみましょう。
             log(
                     "会員名: " + purchase.getMember().get().getMemberName(),
                     "会員ステータス: " + purchase.getMember().get().getMemberStatus().get().getMemberStatusName(),
