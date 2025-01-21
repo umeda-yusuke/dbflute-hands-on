@@ -231,6 +231,20 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_正式会員になってから一週間以内の購入を検索する() {
         // ## Arrange ##
         // ## Act ##
+    	// [1on1でのふぉろー] ConditionBeanの機能を探すときは？
+    	// https://dbflute.seasar.org/ja/tutorial/devfaq.html#howtosearch
+    	//
+    	// [1on1でのふぉろー] ドキュメントの読み方、ザラ読みは極力やめたいところだが...
+    	// せめてザラ読みしたことを覚えておいて、後で持ってくればなんとかなる。
+    	// わかってることとわかってないことの整理。
+    	//
+    	// 「ふんわりわかってる」ということを認識して記憶を保持している事自体はとても良い。
+    	// それも粒度の高いレベルでの「わかってるわかってない」を整理していると言える。
+    	//
+    	// 自分の中でデマを広げさせない | jfluteの日記
+    	// https://jflute.hatenadiary.jp/entry/20110619/nodema
+    	// 「仮説を仮説のまま頭の中で保持し続ける力」
+    	//
         List<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Member().withMemberSecurityAsOne();
