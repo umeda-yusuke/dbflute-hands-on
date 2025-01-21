@@ -190,8 +190,9 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_Product();
             // TODO umeyan order byの要件を見直し (改めて指差し確認大事) by jflute (2025/01/21)
             cb.query().addOrderBy_PurchaseDatetime_Desc();
-            cb.query().queryProduct().addOrderBy_ProductId_Asc();
-            cb.query().queryProduct().addOrderBy_ProductId_Asc();
+            cb.query().addOrderBy_PurchasePrice_Desc();
+            cb.query().addOrderBy_ProductId_Asc();
+            cb.query().addOrderBy_MemberId_Asc();
         });
         // ## Assert ##
         assertHasAnyElement(purchases);
@@ -219,5 +220,24 @@ public class HandsOn03Test extends UnitContainerTestCase {
             assertTrue(member.getFormalizedDatetime().isAfter(toLocalDateTime("2005-09-30")));
             assertTrue(member.getFormalizedDatetime().isBefore(toLocalDateTime("2005-10-04")));
         });
+    }
+
+    /**
+     * 会員と会員ステータス、会員セキュリティ情報も一緒に取得
+     * 商品と商品ステータス、商品カテゴリ、さらに上位の商品カテゴリも一緒に取得
+     * 上位の商品カテゴリ名が取得できていることをアサート
+     * 購入日時が正式会員になってから一週間以内であることをアサート
+     */
+    public void test_正式会員になってから一週間以内の購入を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Member().withMemberSecurityAsOne();
+            cb.setupSelect_Product().withProductStatus();
+            cb.setupSelect_Product().withProductCategory();
+            cb.query().setPurchaseDatetime_FromTo(toLocalDateTime("2005-10-01"), toLocalDateTime("2005-10-03"), op -> op.compareAsWeek());
+        });
+        // ## Assert ##
     }
 }
