@@ -4,8 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.docksidestage.handson.dbflute.cbean.MemberCB;
+import org.docksidestage.handson.dbflute.cbean.PurchaseCB;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
+import org.docksidestage.handson.dbflute.exentity.Purchase;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 // done umeyan 不要なimport文の削除をお願い by jflute (2025/01/07)
@@ -19,6 +23,8 @@ import org.docksidestage.handson.unit.UnitContainerTestCase;
 public class HandsOn03Test extends UnitContainerTestCase {
     @Resource
     private MemberBhv memberBhv;
+    @Resource
+    private PurchaseBhv purchaseBhv;
 
     public void test_会員名称がSで始まる1968年1月1日以前に生まれた会員を検索する() {
         // ## Arrange ##
@@ -128,13 +134,35 @@ public class HandsOn03Test extends UnitContainerTestCase {
         }
     }
 
+    /**
+     * 会員名称と会員ステータス名称と商品名を取得する(ログ出力)
+     * 購入日時の降順、購入価格の降順、商品IDの昇順、会員IDの昇順で並べる
+     * OrderBy がたくさん追加されていることをログで目視確認すること
+     * 購入に紐づく会員の生年月日が存在することをアサート
+     */
     public void test_生年月日が存在する会員の購入を検索する() {
         // ## Arrange ##
-    	// TODO umeyan ConditionBeanの目的ドリブンの「1個目のステップ」を確認し直してみてください by jflute (2025/01/07)
+    	// TODO done umeyan ConditionBeanの目的ドリブンの「1個目のステップ」を確認し直してみてください by jflute (2025/01/07)
     	// https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/about.html#purpose
-    	
         // ## Act ##
+        List<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.query().queryMember().setBirthdate_IsNotNull();
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Product();
+            cb.query().addOrderBy_PurchaseDatetime_Desc();
+            cb.query().queryProduct().addOrderBy_ProductId_Asc();
+            cb.query().queryProduct().addOrderBy_ProductId_Asc();
+        });
         // ## Assert ##
+        assertHasAnyElement(purchases);
+        purchases.forEach(purchase -> {
+            log(
+                    "会員名: " + purchase.getMember().get().getMemberName(),
+                    "会員ステータス: " + purchase.getMember().get().getMemberStatus().get().getMemberStatusName(),
+                    "商品名: " + purchase.getProduct().get().getProductName()
+            );
+            assertNotNull(purchase.getMember().get().getBirthdate());
+        });
     }
 
     public void test_2005年10月の1日から3日までに正式会員になった会員を検索する() {
