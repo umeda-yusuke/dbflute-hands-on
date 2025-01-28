@@ -2,6 +2,7 @@ package org.docksidestage.handson.exercise;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -188,7 +189,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().queryMember().setBirthdate_IsNotNull();
             cb.setupSelect_Member().withMemberStatus();
             cb.setupSelect_Product();
-            // TODO umeyan order byの要件を見直し (改めて指差し確認大事) by jflute (2025/01/21)
+            // TODO done umeyan order byの要件を見直し (改めて指差し確認大事) by jflute (2025/01/21)
             cb.query().addOrderBy_PurchaseDatetime_Desc();
             cb.query().addOrderBy_PurchasePrice_Desc();
             cb.query().addOrderBy_ProductId_Asc();
@@ -197,11 +198,12 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-        	// TODO umeyan memberは3回も使われてget/getで横長になっているので変数に抽出してください by jflute (2025/01/21)
+        	// TODO done umeyan memberは3回も使われてget/getで横長になっているので変数に抽出してください by jflute (2025/01/21)
         	// IntelliJのショートカットでぜひやってみましょう。
+            Member member = purchase.getMember().get();
             log(
-                    "会員名: " + purchase.getMember().get().getMemberName(),
-                    "会員ステータス: " + purchase.getMember().get().getMemberStatus().get().getMemberStatusName(),
+                    "会員名: " + member.getMemberName(),
+                    "会員ステータス: " + member.getMemberStatus().get().getMemberStatusName(),
                     "商品名: " + purchase.getProduct().get().getProductName()
             );
             assertNotNull(purchase.getMember().get().getBirthdate());
