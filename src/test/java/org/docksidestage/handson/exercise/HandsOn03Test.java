@@ -1,5 +1,6 @@
 package org.docksidestage.handson.exercise;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -263,6 +264,35 @@ public class HandsOn03Test extends UnitContainerTestCase {
         purchases.forEach(purchase -> {
             assertTrue(purchase.getPurchaseDatetime().isAfter(purchase.getMember().get().getFormalizedDatetime()));
             assertTrue(purchase.getPurchaseDatetime().isBefore(purchase.getMember().get().getFormalizedDatetime().plusDays(8)));
+        });
+    }
+
+    /**
+     * 画面からの検索条件で1974年がリクエストされたと想定
+     * Arrange で String の "1974/01/01" を一度宣言してから日付クラスに変換
+     * その日付クラスの値を、(日付移動などせず)そのまま使って検索条件を実現
+     * 会員ステータス名称、リマインダ質問と回答、退会理由入力テキストを取得する(ログ出力) ※1
+     * 若い順だが生年月日が null のデータを最初に並べる
+     * 生年月日が指定された条件に合致することをアサート (1975年1月1日なら落ちるように)
+     * Arrangeで "きわどいデータ" ※2 を作ってみましょう (Behavior の updateNonstrict() ※3 を使って)
+     * 検索で含まれるはずの "きわどいデータ" が検索されてることをアサート (アサート自体の保証のため)
+     * 生まれが不明の会員が先頭になっていることをアサート
+     */
+    public void test_1974年までに生まれたもしくは不明の会員を検索する() {
+        // ## Arrange ##
+        LocalDate targetDate = toLocalDate("1974-01-01");
+        // データの挿入の仕方がわからん
+
+        // ## Act ##
+        List<Member> members = memberBhv.selectList(cb -> {
+            cb.query().setBirthdate_LessEqual(toLocalDate("1974-12-31"));
+            cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
+        });
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            log(member.getBirthdate());
+            assertTrue(member.getBirthdate().isBefore(toLocalDate("1975-01-01")));
         });
     }
 }
