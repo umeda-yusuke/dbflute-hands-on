@@ -1,6 +1,7 @@
 package org.docksidestage.handson.exercise;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -293,6 +294,32 @@ public class HandsOn03Test extends UnitContainerTestCase {
         members.forEach(member -> {
             log(member.getBirthdate());
             assertTrue(member.getBirthdate().isBefore(toLocalDate("1975-01-01")));
+        });
+    }
+
+    /**
+     * 画面からの検索条件で2005年6月がリクエストされたと想定
+     * Arrange で String の "2005/06/01" を一度宣言してから日付クラスに変換
+     * その日付クラスの値を、(日付移動などせず)そのまま使って検索条件を実現
+     * 第二ソートキーは会員IDの降順
+     * 検索された会員の生年月日が存在しないことをアサート
+     * 2005年6月に正式会員になった会員が先に並んでいることをアサート (先頭だけじゃなく全体をチェック)
+     */
+    public void test_2005年6月に正式会員になった会員を先に並べて生年月日のない会員を検索する() {
+        // ## Arrange ##
+        LocalDateTime targetDate = toLocalDateTime("2005-06-01");
+        // ## Act ##
+        List<Member> members = memberBhv.selectList(cb -> {
+            cb.query().setFormalizedDatetime_FromTo(targetDate, targetDate.plusMonths(1), op -> op.compareAsMonth());
+            cb.query().setBirthdate_IsNull();
+            cb.query().addOrderBy_MemberId_Desc();
+        });
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            assertNull(member.getBirthdate());
+            assertTrue(member.getFormalizedDatetime().isAfter(targetDate));
+            assertTrue(member.getFormalizedDatetime().isBefore(targetDate.plusMonths(1)));
         });
     }
 }
