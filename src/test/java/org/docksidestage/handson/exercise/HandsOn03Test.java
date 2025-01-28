@@ -322,4 +322,33 @@ public class HandsOn03Test extends UnitContainerTestCase {
             assertTrue(member.getFormalizedDatetime().isBefore(targetDate.plusMonths(1)));
         });
     }
+
+    /**
+     * 会員ステータス名称も取得
+     * 会員IDの昇順で並べる
+     * ページサイズは 3、ページ番号は 1 で検索すること
+     * 会員ID、会員名称、会員ステータス名称をログに出力
+     * SQLのログでカウント検索時と実データ検索時の違いを確認
+     * 総レコード件数が会員テーブルの全件であることをアサート
+     * 総ページ数が期待通りのページ数(計算で導出)であることをアサート
+     * 検索結果のページサイズ、ページ番号が指定されたものであることをアサート
+     * 検索結果が指定されたページサイズ分のデータだけであることをアサート
+     * PageRangeを 3 にして PageNumberList を取得し、[1, 2, 3, 4]であることをアサート
+     * 前のページが存在しないことをアサート
+     * 次のページが存在することをアサート
+     */
+    public void test_全ての会員をページング検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        ListResultBean<Member> memberList = memberBhv.selectPage(cb -> {
+            cb.setupSelect_MemberStatus();
+            cb.query().addOrderBy_MemberId_Asc();
+            cb.paging(3, 1);
+        });
+        // ## Assert ##
+        assertHasAnyElement(memberList);
+        memberList.forEach(member -> {
+            log("会員ID: " + member.getMemberId(), "会員名: " + member.getMemberName(), "会員ステータス: " + member.getMemberStatus().get().getMemberStatusName());
+        });
+    }
 }
