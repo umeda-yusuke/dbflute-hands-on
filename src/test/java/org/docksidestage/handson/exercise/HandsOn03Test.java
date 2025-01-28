@@ -252,8 +252,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_Member().withMemberSecurityAsOne();
             cb.setupSelect_Product().withProductStatus();
             cb.setupSelect_Product().withProductCategory();
-            cb.query().setPurchaseDatetime_FromTo(toLocalDateTime("2005-10-01"), toLocalDateTime("2005-10-03"), op -> op.compareAsWeek());
+            cb.columnQuery(colCB -> {colCB.specify().columnPurchaseDatetime();})
+                    .greaterEqual(colCB -> {colCB.specify().specifyMember().columnFormalizedDatetime();});
+            cb.columnQuery(colCB -> {colCB.specify().columnPurchaseDatetime();})
+                    .lessThan(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime())
+                    .convert(op -> op.addDay(8));
         });
         // ## Assert ##
+        assertHasAnyElement(purchases);
+        purchases.forEach(purchase -> {
+            assertTrue(purchase.getPurchaseDatetime().isAfter(purchase.getMember().get().getFormalizedDatetime()));
+            assertTrue(purchase.getPurchaseDatetime().isBefore(purchase.getMember().get().getFormalizedDatetime().plusDays(8)));
+        });
     }
 }
