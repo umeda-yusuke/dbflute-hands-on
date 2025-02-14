@@ -167,7 +167,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         for (int i = 0; i < members.size() - 1; i++) {
-        	// TODO umeyan [いいね] 変数名がわかりやすい、current, next by jflute (2025/01/21)
+        	// TODO done umeyan [いいね] 変数名がわかりやすい、current, next by jflute (2025/01/21)
             String currentStatusCode = members.get(i).getMemberStatusCode();
             String nextStatusCode = members.get(i + 1).getMemberStatusCode();
             // TODO umeyan 厳密には、一種類の会員ステータスしか検索されなかった場合に、アサートしたいことが成り立たない by jflute (2025/01/21)
@@ -208,8 +208,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
                     "会員ステータス: " + member.getMemberStatus().get().getMemberStatusName(),
                     "商品名: " + purchase.getProduct().get().getProductName()
             );
-            // TODO umeyan こっちも抽出した member がそのまま使えるかなと by jflute (2025/01/28)
-            assertNotNull(purchase.getMember().get().getBirthdate());
+            // TODO done umeyan こっちも抽出した member がそのまま使えるかなと by jflute (2025/01/28)
+            assertNotNull(member.getBirthdate());
         });
     }
 
@@ -295,10 +295,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_Product().withProductStatus();
             cb.setupSelect_Product().withProductCategory();
             
-            // TODO umeyan 改行しないLambdaであれば、expressionスタイルでOKです (lessThanは大丈夫) by jflute (2025/01/28)
-            cb.columnQuery(colCB -> {colCB.specify().columnPurchaseDatetime();})
-                    .greaterEqual(colCB -> {colCB.specify().specifyMember().columnFormalizedDatetime();});
-            cb.columnQuery(colCB -> {colCB.specify().columnPurchaseDatetime();})
+            // TODO done umeyan 改行しないLambdaであれば、expressionスタイルでOKです (lessThanは大丈夫) by jflute (2025/01/28)
+            cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
+                    .greaterEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime());
+            cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
                     .lessThan(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime())
                     .convert(op -> op.addDay(8));
             
@@ -317,9 +317,11 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-            // TODO umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
-            assertTrue(purchase.getPurchaseDatetime().isAfter(purchase.getMember().get().getFormalizedDatetime()));
-            assertTrue(purchase.getPurchaseDatetime().isBefore(purchase.getMember().get().getFormalizedDatetime().plusDays(8)));
+            // TODO done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
+            LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
+            LocalDateTime formalizedDatetime = purchase.getMember().get().getFormalizedDatetime();
+            assertTrue(purchaseDatetime.isAfter(formalizedDatetime));
+            assertTrue(purchaseDatetime.isBefore(formalizedDatetime.plusDays(8)));
         });
     }
 
@@ -337,7 +339,17 @@ public class HandsOn03Test extends UnitContainerTestCase {
     public void test_1974年までに生まれたもしくは不明の会員を検索する() {
         // ## Arrange ##
         LocalDate targetDate = toLocalDate("1974-01-01");
-        // データの挿入の仕方がわからん
+        Member targetMember = new Member();
+        targetMember.setMemberId(99999);
+        targetMember.setMemberName("きわどいデータ");
+        targetMember.setMemberAccount("kiwadoi");
+        targetMember.setBirthdate(targetDate);
+        targetMember.setMemberStatusCode("FML");
+        targetMember.setRegisterDatetime(currentLocalDateTime());
+        targetMember.setRegisterUser("test");
+        targetMember.setUpdateDatetime(LocalDateTime.now());
+        targetMember.setUpdateUser("test");
+        memberBhv.insert(targetMember);
 
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
