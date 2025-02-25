@@ -63,8 +63,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.query().setBirthdate_IsNotNull();
             cb.query().addOrderBy_Birthdate_Desc();
             cb.query().addOrderBy_MemberId_Asc();
-            // TODO done umeyan 要件を変えたとしても、birthdateがnotnullのものだけに絞るなら NullsLast が不要になる by jflute (2025/01/21)
-            // TODO done umeyan cbの呼び出し順序の慣習として、select句、where句、order by句... by jflute (2025/01/21)
+            // done umeyan 要件を変えたとしても、birthdateがnotnullのものだけに絞るなら NullsLast が不要になる by jflute (2025/01/21)
+            // done umeyan cbの呼び出し順序の慣習として、select句、where句、order by句... by jflute (2025/01/21)
             // というのがオススメなので、このIsNotNullは、order byよりも前に持っていってくれると嬉しいです。
         });
         // [1on1でのふぉろー]
@@ -162,7 +162,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(members);
         for (int i = 0; i < members.size() - 1; i++) {
-        	// TODO done umeyan [いいね] 変数名がわかりやすい、current, next by jflute (2025/01/21)
+        	// done umeyan [いいね] 変数名がわかりやすい、current, next by jflute (2025/01/21)
             String currentStatusCode = members.get(i).getMemberStatusCode();
             String nextStatusCode = members.get(i + 1).getMemberStatusCode();
             // TODO umeyan 厳密には、一種類の会員ステータスしか検索されなかった場合に、アサートしたいことが成り立たない by jflute (2025/01/21)
@@ -203,7 +203,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
                     "会員ステータス: " + member.getMemberStatus().get().getMemberStatusName(),
                     "商品名: " + purchase.getProduct().get().getProductName()
             );
-            // TODO done umeyan こっちも抽出した member がそのまま使えるかなと by jflute (2025/01/28)
+            // done umeyan こっちも抽出した member がそのまま使えるかなと by jflute (2025/01/28)
             assertNotNull(member.getBirthdate());
         });
     }
@@ -230,36 +230,41 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Arrange ##
         String fromDateText = "2005-10-01";
         String toDateText = "2005-10-03";
+        adjustMember_FormalizedDatetime_FirstOnly(toLocalDateTime("2005-10-01"), "vi");
         
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
-            // TODO done umeyan 要件 "会員ステータスも一緒に取得" (2025/01/28)
-            // TODO done umeyan 要件 "会員ステータス名称だけ取得できればいい" (2025/01/28)
+            // done umeyan 要件 "会員ステータスも一緒に取得" (2025/01/28)
+            // TODO umeyan 要件 "会員ステータス名称だけ取得できればいい" (2025/01/28)
+            // https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/specify/specifycolumn.html
             cb.setupSelect_MemberStatus();
-            // TODO done umeyan SQL見ると、10月まるまるが対象になってしまっています by jflute (2025/01/28)
+            
+            // done umeyan SQL見ると、10月まるまるが対象になってしまっています by jflute (2025/01/28)
             //  where dfloc.FORMALIZED_DATETIME >= '2005-10-01 00:00:00.000'
             //    and dfloc.FORMALIZED_DATETIME < '2005-11-01 00:00:00.000'
             cb.query().setFormalizedDatetime_FromTo(
                     toLocalDateTime(fromDateText), toLocalDateTime(toDateText), op -> op.compareAsDate()
             );
+            
             // 質問: どこからまでどこまで？ => 10/1 00:00:00 〜 10/4 00:00:00未満
             // ふぉろー: DateFromToのコンセプト
-            // TODO done umeyan 要件 "会員名称に "vi" を含む会員を検索" (2025/01/28)
+            // done umeyan 要件 "会員名称に "vi" を含む会員を検索" (2025/01/28)
             cb.query().setMemberName_LikeSearch("vi", op -> op.likeContain());
         });
         // ## Assert ##
         assertHasAnyElement(members);
         members.forEach(member -> {
-            // TODO done umeyan 要件 "会員名称と正式会員日時と会員ステータス名称をログに出力" by jflute (2025/01/28)
+            // done umeyan 要件 "会員名称と正式会員日時と会員ステータス名称をログに出力" by jflute (2025/01/28)
             log(
                     "会員名: " + member.getMemberName(),
                     "正式会員日時: " + member.getFormalizedDatetime(),
                     "会員ステータス名称: " + member.getMemberStatus().get().getMemberStatusName()
             );
             // TODO umeyan 要件 "会員ステータスがコードと名称だけが取得されていることをアサート" by jflute (2025/01/28)
-            // TODO done umeyan 型がLocalDateTimeなので「9/30より後(after)」だと、9/30の1ミリ秒以降になっちゃう by jflute (2025/01/28)
-            // TODO done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
+            // done umeyan 型がLocalDateTimeなので「9/30より後(after)」だと、9/30の1ミリ秒以降になっちゃう by jflute (2025/01/28)
+            // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
+            // TODO umeyan 2005-10-01ぴったりが来ると落ちるassertになってしまっている by jflute (2025/02/25)
             assertTrue(formalizedDatetime.isAfter(toLocalDateTime("2005-10-01")));
             assertTrue(formalizedDatetime.isBefore(toLocalDateTime("2005-10-04")));
             
@@ -300,7 +305,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             cb.setupSelect_Product().withProductStatus();
             cb.setupSelect_Product().withProductCategory();
             
-            // TODO done umeyan 改行しないLambdaであれば、expressionスタイルでOKです (lessThanは大丈夫) by jflute (2025/01/28)
+            // done umeyan 改行しないLambdaであれば、expressionスタイルでOKです (lessThanは大丈夫) by jflute (2025/01/28)
             cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
                     .greaterEqual(colCB -> colCB.specify().specifyMember().columnFormalizedDatetime());
             cb.columnQuery(colCB -> colCB.specify().columnPurchaseDatetime())
@@ -322,9 +327,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
-            // TODO done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
+            // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
             LocalDateTime formalizedDatetime = purchase.getMember().get().getFormalizedDatetime();
+            // TODO umeyan SQLの方はgreaterEqualなので、ぴったりのデータが来ると落ちる by jflute (2025/02/25)
             assertTrue(purchaseDatetime.isAfter(formalizedDatetime));
             assertTrue(purchaseDatetime.isBefore(formalizedDatetime.plusDays(8)));
         });
