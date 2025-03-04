@@ -365,8 +365,10 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
-            // TODO umeyan ここも FromTo を使って欲しいところ by jflute (2025/01/28)
-            cb.query().setBirthdate_LessEqual(toLocalDate("1974-12-31"));
+            // TODO done umeyan ここも FromTo を使って欲しいところ by jflute (2025/01/28)
+            cb.query().setBirthdate_FromTo(
+                    toLocalDate("0001-01-01"), toLocalDate("1974-12-31"), op -> op.compareAsDate()
+            );
             cb.query().addOrderBy_Birthdate_Desc().withNullsFirst();
         });
         // ## Assert ##
