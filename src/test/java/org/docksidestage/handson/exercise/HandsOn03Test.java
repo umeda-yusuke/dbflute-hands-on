@@ -238,6 +238,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // TODO umeyan 要件 "会員ステータス名称だけ取得できればいい" (2025/01/28)
             // https://dbflute.seasar.org/ja/manual/function/ormapper/conditionbean/specify/specifycolumn.html
             cb.setupSelect_MemberStatus();
+            cb.specify().specifyMemberStatus().columnMemberStatusName();
             
             // done umeyan SQL見ると、10月まるまるが対象になってしまっています by jflute (2025/01/28)
             //  where dfloc.FORMALIZED_DATETIME >= '2005-10-01 00:00:00.000'
@@ -264,8 +265,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // done umeyan 型がLocalDateTimeなので「9/30より後(after)」だと、9/30の1ミリ秒以降になっちゃう by jflute (2025/01/28)
             // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
-            // TODO umeyan 2005-10-01ぴったりが来ると落ちるassertになってしまっている by jflute (2025/02/25)
-            assertTrue(formalizedDatetime.isAfter(toLocalDateTime("2005-10-01")));
+            // TODO done umeyan 2005-10-01ぴったりが来ると落ちるassertになってしまっている by jflute (2025/02/25)
+            assertTrue(formalizedDatetime.isAfter(toLocalDateTime("2005-10-01")) || formalizedDatetime.isEqual(toLocalDateTime("2005-10-01")));
             assertTrue(formalizedDatetime.isBefore(toLocalDateTime("2005-10-04")));
             
             // LocalDate: 日付 (タイムゾーンを意識しない)
