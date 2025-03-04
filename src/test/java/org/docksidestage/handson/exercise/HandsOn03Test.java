@@ -330,8 +330,8 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
             LocalDateTime formalizedDatetime = purchase.getMember().get().getFormalizedDatetime();
-            // TODO umeyan SQLの方はgreaterEqualなので、ぴったりのデータが来ると落ちる by jflute (2025/02/25)
-            assertTrue(purchaseDatetime.isAfter(formalizedDatetime));
+            // TODO done umeyan SQLの方はgreaterEqualなので、ぴったりのデータが来ると落ちる by jflute (2025/02/25)
+            assertTrue(purchaseDatetime.isAfter(formalizedDatetime) || purchaseDatetime.isEqual(formalizedDatetime));
             assertTrue(purchaseDatetime.isBefore(formalizedDatetime.plusDays(8)));
         });
     }
