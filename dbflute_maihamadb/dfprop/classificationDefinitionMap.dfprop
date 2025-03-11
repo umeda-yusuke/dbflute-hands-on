@@ -42,7 +42,6 @@ map:{
             ; map:{topComment=フラグを示す; codeType=Number}
             ; map:{code=1; name=True ; alias=はい  ; comment=有効を示す}
             ; map:{code=0; name=False; alias=いいえ; comment=無効を示す}
-            ; $$ALL$$ = map:{suffix:_FLG=Flg}
     }
     ; MemberStatus = list:{
             ; map:{topComment=入会から退会までの会員のステータスを示す; codeType=String}
@@ -108,6 +107,5 @@ map:{
         ; map:{code=BAK; name=BankTransfer; alias=銀行振込; comment=銀行振込で確認してから商品発送}
         ; map:{code=CRC; name=CreditCard; alias=クレジットカード; comment=クレジットカードの番号を教えてもらう}
     }
-    ; PURCHASE_PAYMENT = map:{PAYMENT_METHOD_CODE=PaymentMethod}
 }
 # ----------------/
