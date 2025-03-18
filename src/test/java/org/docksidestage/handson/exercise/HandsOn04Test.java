@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
@@ -20,6 +21,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
     public void test_一番若い仮会員の会員を検索する() {
         // ## Arrange ##
         // ## Act ##
+        // TODO umeyan "一番若い" の条件が抜けている by jflute (2025/03/18)
         List<Member> members = memberBhv.selectList(cb -> {
             cb.query().setMemberStatusCode_Equal_仮会員();
             cb.setupSelect_MemberStatus();
@@ -28,6 +30,9 @@ public class HandsOn04Test extends UnitContainerTestCase {
         assertHasAnyElement(members);
         members.forEach(member -> {
             log(member);
+            
+            // [1on1でのふぉろー] is判定メソッドも使えます
+            //assertTrue(member.isMemberStatusCode仮会員());
             assertEquals("仮会員", member.getMemberStatus().get().getMemberStatusName());
         });
     }

@@ -265,7 +265,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // done umeyan 型がLocalDateTimeなので「9/30より後(after)」だと、9/30の1ミリ秒以降になっちゃう by jflute (2025/01/28)
             // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime formalizedDatetime = member.getFormalizedDatetime();
-            // TODO done umeyan 2005-10-01ぴったりが来ると落ちるassertになってしまっている by jflute (2025/02/25)
+            // done umeyan 2005-10-01ぴったりが来ると落ちるassertになってしまっている by jflute (2025/02/25)
             assertTrue(formalizedDatetime.isAfter(toLocalDateTime("2005-10-01")) || formalizedDatetime.isEqual(toLocalDateTime("2005-10-01")));
             assertTrue(formalizedDatetime.isBefore(toLocalDateTime("2005-10-04")));
             
@@ -331,7 +331,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
             // done umeyan 変数の抽出、今後も意識お願いします。なのでここも by jflute (2025/01/28)
             LocalDateTime purchaseDatetime = purchase.getPurchaseDatetime();
             LocalDateTime formalizedDatetime = purchase.getMember().get().getFormalizedDatetime();
-            // TODO done umeyan SQLの方はgreaterEqualなので、ぴったりのデータが来ると落ちる by jflute (2025/02/25)
+            // done umeyan SQLの方はgreaterEqualなので、ぴったりのデータが来ると落ちる by jflute (2025/02/25)
             assertTrue(purchaseDatetime.isAfter(formalizedDatetime) || purchaseDatetime.isEqual(formalizedDatetime));
             assertTrue(purchaseDatetime.isBefore(formalizedDatetime.plusDays(8)));
         });
@@ -365,7 +365,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
 
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
-            // TODO done umeyan ここも FromTo を使って欲しいところ by jflute (2025/01/28)
+            // done umeyan ここも FromTo を使って欲しいところ by jflute (2025/01/28)
             cb.query().setBirthdate_FromTo(
                     toLocalDate("0001-01-01"), toLocalDate("1974-12-31"), op -> op.compareAsDate()
             );
