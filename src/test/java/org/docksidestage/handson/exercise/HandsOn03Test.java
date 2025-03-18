@@ -356,7 +356,7 @@ public class HandsOn03Test extends UnitContainerTestCase {
         targetMember.setMemberName("きわどいデータ");
         targetMember.setMemberAccount("kiwadoi");
         targetMember.setBirthdate(targetDate);
-        targetMember.setMemberStatusCode("FML");
+        targetMember.setMemberStatusCode_正式会員();
         targetMember.setRegisterDatetime(currentLocalDateTime());
         targetMember.setRegisterUser("test");
         targetMember.setUpdateDatetime(LocalDateTime.now());
