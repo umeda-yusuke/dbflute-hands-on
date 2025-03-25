@@ -37,18 +37,39 @@ public class HandsOn04Test extends UnitContainerTestCase {
     public void test_一番若い仮会員の会員を検索する() {
         // ## Arrange ##
         // ## Act ##
-        // TODO done umeyan "一番若い" の条件が抜けている by jflute (2025/03/18)
+        // TODO umeyan 修行++: 同率首位を検索できるようにしてみましょう by jflute (2025/03/25)
+        // (その場合、selectList() になる)
+        // (ConditionBean (cb) の機能で、そういう検索ができるものがある)
+        // (わからなかったら、まずでSQLで考えてみてみましょう。SQLで同率首位をどう取るか？)
+
+        // done umeyan "一番若い" の条件が抜けている by jflute (2025/03/18)
         List<Member> members = memberBhv.selectList(cb -> {
+            // TODO umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
             cb.query().setMemberStatusCode_Equal_仮会員();
             cb.setupSelect_MemberStatus();
+            // TODO umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
             cb.query().addOrderBy_Birthdate_Asc().withNullsLast();
+            
+            // fetchFirst(1)自体は良くて、1と決め売ったからにはリストにはならず絶対に一件なので...
+            // そもそも selectList() じゃなくて selectEntity() の検索で良い。
             cb.fetchFirst(1);
         });
         // ## Assert ##
         assertHasAnyElement(members);
         members.forEach(member -> {
+            // [1on1でのふぉろー] こういう確認のためのログをアサートの前に入れちゃってもOK
+            log(member.getBirthdate());
             // [1on1でのふぉろー] is判定メソッドも使えます
             assertTrue(member.isMemberStatusCode仮会員());
         });
     }
+    
+    // [1on1でのふぉろー] select系メソッド
+    // o カウント検索
+    // o 一件検索
+    // o リスト検索
+    // o ページング検索
+    // o カーソル検索
+    // o (スカラ検索)
+    // https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/index.html
 }
