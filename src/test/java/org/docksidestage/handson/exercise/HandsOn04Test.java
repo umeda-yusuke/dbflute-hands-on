@@ -25,6 +25,19 @@ import org.docksidestage.handson.unit.UnitContainerTestCase;
 // 振り返りの判断基準の候補: 判断、その中の「手順」
 // 手順は結果が成功でも反省しないといけない。
 
+//
+// [1on1でのふぉろー]
+// 振り返りのお話
+//
+// 良かったことを続けるために、良かったことを見失わないこと
+// https://jflute.hatenadiary.jp/entry/20170826/keepgoodtime
+//
+// 振り返りを終えて、Tryはどこへ？
+// https://jflute.hatenadiary.jp/entry/20140103/1388728678
+//
+// 振り返りで得た、良いだろうと思われる手順を、無意識にできるようにするためには？話
+//
+
 public class HandsOn04Test extends UnitContainerTestCase {
     @Resource
     private MemberBhv memberBhv;
