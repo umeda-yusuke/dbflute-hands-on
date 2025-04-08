@@ -87,6 +87,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberWithdrawalAsOne();
+            // TODO umeyan "会員退会情報も取得して会員を検索する" なので絞り込みはせずに検索 by jflute (2025/04/08)
             cb.query().setMemberStatusCode_NotEqual_退会会員();
         });
         // ## Assert ##
@@ -104,10 +105,19 @@ public class HandsOn04Test extends UnitContainerTestCase {
     public void test_一番若い仮会員の会員を検索する() {
         // ## Arrange ##
         // ## Act ##
-        // TODO umeyan 修行++: 同率首位を検索できるようにしてみましょう by jflute (2025/03/25)
+        // done umeyan 修行++: 同率首位を検索できるようにしてみましょう by jflute (2025/03/25)
+        // [1on1でのふぉろー] ScalarConditionで一発取りもできる
+        //memberBhv.selectList(cb -> {
+        //    cb.query().scalar_Equal().max(memberCB -> {
+        //        memberCB.specify().columnBirthdate();
+        //        memberCB.query().setMemberStatusCode_Equal_仮会員();
+        //    });
+        //    cb.query().setMemberStatusCode_Equal_仮会員();
+        //});
+        
         OptionalScalar<LocalDate> latestBirthdate = memberBhv.selectScalar(LocalDate.class).max(cb -> {
-            cb.query().setMemberStatusCode_Equal_仮会員();
             cb.specify().columnBirthdate();
+            cb.query().setMemberStatusCode_Equal_仮会員();
         });
         // (その場合、selectList() になる)
         // (ConditionBean (cb) の機能で、そういう検索ができるものがある)
@@ -119,7 +129,8 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
             cb.query().setBirthdate_Equal(latestBirthdate.get());
-            // TODO done umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
+            // done umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
+            // TODO umeyan ここまで来ると、そもそも BIRTHDATE によるソートは意味がなくなっている by jflute (2025/04/08)
             cb.query().addOrderBy_Birthdate_Desc().withNullsLast();
             // fetchFirst(1)自体は良くて、1と決め売ったからにはリストにはならず絶対に一件なので...
             // そもそも selectList() じゃなくて selectEntity() の検索で良い。
@@ -142,4 +153,11 @@ public class HandsOn04Test extends UnitContainerTestCase {
     // o カーソル検索
     // o (スカラ検索)
     // https://dbflute.seasar.org/ja/manual/function/ormapper/behavior/index.html
+
+    // [1on1でのふぉろー] 普通サブクエリと相関サブクエリ
+    // o それぞれの特徴
+    // o MySQLの最新だと？
+    // o 他のDBだと？(軽くSQLを書き換えて最適化する話)
+    // o 有料DBの強さ
+    // o ITの大企業の歴史的なお話
 }
