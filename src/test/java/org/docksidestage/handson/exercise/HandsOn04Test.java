@@ -109,11 +109,11 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
         // done umeyan "一番若い" の条件が抜けている by jflute (2025/03/18)
         List<Member> members = memberBhv.selectList(cb -> {
-            // TODO umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
-            cb.query().setMemberStatusCode_Equal_仮会員();
+            // TODO done umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
             cb.setupSelect_MemberStatus();
-            // TODO umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
-            cb.query().addOrderBy_Birthdate_Asc().withNullsLast();
+            cb.query().setMemberStatusCode_Equal_仮会員();
+            // TODO done umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
+            cb.query().addOrderBy_Birthdate_Desc().withNullsLast();
             
             // fetchFirst(1)自体は良くて、1と決め売ったからにはリストにはならず絶対に一件なので...
             // そもそも selectList() じゃなくて selectEntity() の検索で良い。
