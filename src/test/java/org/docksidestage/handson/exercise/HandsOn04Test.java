@@ -6,7 +6,9 @@ import javax.annotation.Resource;
 
 import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
+import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
+import org.docksidestage.handson.dbflute.exentity.Purchase;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 // [1on1でのふぉろー]
@@ -41,6 +43,56 @@ import org.docksidestage.handson.unit.UnitContainerTestCase;
 public class HandsOn04Test extends UnitContainerTestCase {
     @Resource
     private MemberBhv memberBhv;
+    @Resource
+    private PurchaseBhv purchaseBhv;
+
+    /**
+     * 退会会員のステータスコードは "WDL"。ひとまずベタで
+     * 支払完了フラグは "0" で未払い。ひとまずベタで
+     * 購入日時の降順で並べる
+     * 会員名称と商品名と一緒にログに出力
+     * 購入が未払いであることをアサート
+     */
+    public void test_退会会員の未払い購入を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Product();
+            cb.query().queryMember().setMemberStatusCode_Equal_退会会員();
+            cb.query().setPaymentCompleteFlg_Equal_False();
+            cb.query().addOrderBy_PurchaseDatetime_Desc();
+        });
+        // ## Assert ##
+        assertHasAnyElement(purchases);
+        purchases.forEach(purchase -> {
+            log("会員名称: " + purchase.getMember().get().getMemberName(),
+                    "商品名: " + purchase.getProduct().get().getProductName(),
+                    "購入日時: " + purchase.getPurchaseDatetime(),
+                    "会員ステータス: " + purchase.getMember().get().getMemberStatusCode()
+            );
+            assertTrue(purchase.isPaymentCompleteFlgFalse());
+        });
+    }
+
+    /**
+     * 退会会員でない会員は、会員退会情報を持っていないことをアサート
+     * 退会会員のステータスコードは "WDL"。ひとまずベタで
+     * 不意のバグや不意のデータ不備でもテストが(できるだけ)成り立つこと
+     */
+    public void test_会員退会情報も取得して会員を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Member> members = memberBhv.selectList(cb -> {
+            cb.setupSelect_MemberWithdrawalAsOne();
+            cb.query().setMemberStatusCode_NotEqual_退会会員();
+        });
+        // ## Assert ##
+        assertHasAnyElement(members);
+        members.forEach(member -> {
+            assertTrue(member.getMemberWithdrawalAsOne().isEmpty());
+        });
+    }
 
     /**
      * 区分値メソッドの JavaDoc コメントを確認する
