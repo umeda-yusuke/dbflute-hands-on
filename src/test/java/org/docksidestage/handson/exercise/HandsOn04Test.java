@@ -1,9 +1,11 @@
 package org.docksidestage.handson.exercise;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.dbflute.optional.OptionalScalar;
 import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
@@ -103,6 +105,10 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Arrange ##
         // ## Act ##
         // TODO umeyan 修行++: 同率首位を検索できるようにしてみましょう by jflute (2025/03/25)
+        OptionalScalar<LocalDate> latestBirthdate = memberBhv.selectScalar(LocalDate.class).max(cb -> {
+            cb.query().setMemberStatusCode_Equal_仮会員();
+            cb.specify().columnBirthdate();
+        });
         // (その場合、selectList() になる)
         // (ConditionBean (cb) の機能で、そういう検索ができるものがある)
         // (わからなかったら、まずでSQLで考えてみてみましょう。SQLで同率首位をどう取るか？)
@@ -112,12 +118,11 @@ public class HandsOn04Test extends UnitContainerTestCase {
             // TODO done umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
+            cb.query().setBirthdate_Equal(latestBirthdate.get());
             // TODO done umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
             cb.query().addOrderBy_Birthdate_Desc().withNullsLast();
-            
             // fetchFirst(1)自体は良くて、1と決め売ったからにはリストにはならず絶対に一件なので...
             // そもそも selectList() じゃなくて selectEntity() の検索で良い。
-            cb.fetchFirst(1);
         });
         // ## Assert ##
         assertHasAnyElement(members);
