@@ -125,7 +125,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
 
         // done umeyan "一番若い" の条件が抜けている by jflute (2025/03/18)
         List<Member> members = memberBhv.selectList(cb -> {
-            // TODO done umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
+            // done umeyan select句にまつわるものを先に書いて、where句のものを後に by jflute (2025/03/25)
             cb.setupSelect_MemberStatus();
             cb.query().setMemberStatusCode_Equal_仮会員();
             cb.query().setBirthdate_Equal(latestBirthdate.get());
