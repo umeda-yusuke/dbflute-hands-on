@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.dbflute.optional.OptionalScalar;
-import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
@@ -87,13 +86,15 @@ public class HandsOn04Test extends UnitContainerTestCase {
         // ## Act ##
         List<Member> members = memberBhv.selectList(cb -> {
             cb.setupSelect_MemberWithdrawalAsOne();
-            // TODO umeyan "会員退会情報も取得して会員を検索する" なので絞り込みはせずに検索 by jflute (2025/04/08)
-            cb.query().setMemberStatusCode_NotEqual_退会会員();
+            // TODO done umeyan "会員退会情報も取得して会員を検索する" なので絞り込みはせずに検索 by jflute (2025/04/08)
         });
         // ## Assert ##
         assertHasAnyElement(members);
-        members.forEach(member -> {
-            assertTrue(member.getMemberWithdrawalAsOne().isEmpty());
+        members.stream().filter(
+                member -> !member.isMemberStatusCode退会会員()
+        ).forEach(member -> {
+            // done umeyan 退会会員でない会員は、会員退会情報を持っていないことをアサート by jflute (2025/04/08)
+            assertFalse(member.getMemberWithdrawalAsOne().isPresent());
         });
     }
 
@@ -130,8 +131,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
             cb.query().setMemberStatusCode_Equal_仮会員();
             cb.query().setBirthdate_Equal(latestBirthdate.get());
             // done umeyan 一番年齢の高い人が取れちゃってる (日付は少ない方が年齢が高いもの) by jflute (2025/03/25)
-            // TODO umeyan ここまで来ると、そもそも BIRTHDATE によるソートは意味がなくなっている by jflute (2025/04/08)
-            cb.query().addOrderBy_Birthdate_Desc().withNullsLast();
+            // TODO done umeyan ここまで来ると、そもそも BIRTHDATE によるソートは意味がなくなっている by jflute (2025/04/08)
             // fetchFirst(1)自体は良くて、1と決め売ったからにはリストにはならず絶対に一件なので...
             // そもそも selectList() じゃなくて selectEntity() の検索で良い。
         });
