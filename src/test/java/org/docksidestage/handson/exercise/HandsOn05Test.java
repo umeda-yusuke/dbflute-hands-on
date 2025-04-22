@@ -47,6 +47,10 @@ public class HandsOn05Test extends UnitContainerTestCase {
     public void test_会員と共に現在の住所を取得して検索する() {
         // ## Arrange ##
         // ## Act ##
+        // [1on1でのふぉろー] 業務的one-to-oneを使ったやり方
+        //ListResultBean<Member> memberList = memberBhv.selectList(cb -> {
+        //    cb.setupSelect_MemberAddressAsValid(currentLocalDate());
+        //});
         List<MemberAddress> addresses = memberAddressBhv.selectList(cb -> {
             cb.setupSelect_Member();
             cb.query().setValidBeginDate_LessEqual(currentLocalDate());
