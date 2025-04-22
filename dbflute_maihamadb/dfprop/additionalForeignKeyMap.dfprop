@@ -34,11 +34,7 @@
 # *The line that starts with '#' means comment-out.
 #
 map:{
-    # TODO umeyan これはexampleなので無くてOKです by jflute
-    ; FK_MEMBER_MEMBER_STATUS_CODE = map:{
-        ; localTableName  = MEMBER             ; foreignTableName  = MEMBER_STATUS
-        ; localColumnName = MEMBER_STATUS_CODE ; foreignColumnName = MEMBER_STATUS_CODE
-    }
+    # TODO done umeyan これはexampleなので無くてOKです by jflute
     ; FK_MEMBER_MEMBER_ADDRESS_VALID = map:{
         ; localTableName  = MEMBER    ; foreignTableName  = MEMBER_ADDRESS
         ; localColumnName = MEMBER_ID ; foreignColumnName = MEMBER_ID
