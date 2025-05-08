@@ -4,14 +4,20 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberAddressBhv;
+import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.dbflute.exentity.MemberAddress;
+import org.docksidestage.handson.dbflute.exentity.Purchase;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
 
 public class HandsOn05Test extends UnitContainerTestCase {
     @Resource
     private MemberAddressBhv memberAddressBhv;
+
+    @Resource
+    private PurchaseBhv purchaseBhv;
 
     /**
      * 会員名称、有効開始日、有効終了日、住所、地域名称をログに出して確認する
@@ -29,11 +35,9 @@ public class HandsOn05Test extends UnitContainerTestCase {
         // ## Assert ##
         addresses.forEach(address -> {
             Member member = address.getMember().get();
-            log("会員名称: " + member.getMemberName(),
-                "有効開始日: " + address.getValidBeginDate(),
-                "有効終了日: " + address.getValidEndDate(),
-                "住所: " + address.getAddress(),
-                "地域名称: " + address.getRegion().get().getRegionName());
+            log("会員名称: " + member.getMemberName(), "有効開始日: " + address.getValidBeginDate(),
+                    "有効終了日: " + address.getValidEndDate(), "住所: " + address.getAddress(),
+                    "地域名称: " + address.getRegion().get().getRegionName());
         });
     }
 
@@ -59,10 +63,37 @@ public class HandsOn05Test extends UnitContainerTestCase {
         assertHasAnyElement(addresses);
         addresses.forEach(address -> {
             Member member = address.getMember().get();
-            log("会員名称: " + member.getMemberName(),
-                    "住所: " + address.getAddress(),
-                    "開始日: " + address.getValidBeginDate(),
+            log("会員名称: " + member.getMemberName(), "住所: " + address.getAddress(), "開始日: " + address.getValidBeginDate(),
                     "終了日: " + address.getValidEndDate());
+        });
+    }
+
+    /***
+     * 会員ステータス名称と住所をログに出して確認すること
+     * 購入に紐づいている会員の住所の地域が千葉であることをアサート
+     */
+    public void test_千葉に住んでいる会員の支払済み購入を検索する() {
+        // ## Arrange ##
+        // ## Act ##
+        List<Purchase> purchases = purchaseBhv.selectList(cb -> {
+            cb.setupSelect_Member().withMemberStatus();
+            cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
+            cb.query().setPaymentCompleteFlg_Equal_True();
+            cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).queryRegion().setRegionId_Equal_千葉();
+        });
+        // ## Assert ##
+        assertHasAnyElement(purchases);
+        purchases.forEach(purchase -> {
+            Member member = purchase.getMember().get();
+            MemberAddress address = member.getMemberAddressAsValid().get();
+            log("会員名称: " + member.getMemberName(),
+                    "会員ステータス: " + member.getMemberStatusCode(),
+                    "住所: " + address.getAddress(),
+                    "地域名称: " + address.getRegion().get().getRegionName(),
+                    "購入日時: " + purchase.getPurchaseDatetime()
+            );
+            assertTrue(address.getRegion().get().isRegionId千葉());
+            assertTrue(purchase.isPaymentCompleteFlgTrue());
         });
     }
 }
