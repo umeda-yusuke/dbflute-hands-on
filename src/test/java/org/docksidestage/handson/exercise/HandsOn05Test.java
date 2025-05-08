@@ -68,6 +68,14 @@ public class HandsOn05Test extends UnitContainerTestCase {
         });
     }
 
+    // フォーマッターを掛けるタイミング:
+    //  A. IDE上で掛ける // for UX
+    //  B. コミット時に自動で掛かる (チェックが掛かるだけの場合も) // for data
+    //  C. コミット後に自動で掛かる (チェックが掛かるだけの場合も) // for data
+    //
+    // ※バリデーションの話も交えて、「UXのため」と「dataのため」
+    // ※spotlessのちょい紹介
+    // ※他の現場で保存ボタンで自動フォーマットするやり方の紹介
     /***
      * 会員ステータス名称と住所をログに出して確認すること
      * 購入に紐づいている会員の住所の地域が千葉であることをアサート
@@ -77,8 +85,10 @@ public class HandsOn05Test extends UnitContainerTestCase {
         // ## Act ##
         List<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
+            
             cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
             cb.query().setPaymentCompleteFlg_Equal_True();
+            // TODO umeyan queryRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
             cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).queryRegion().setRegionId_Equal_千葉();
         });
         // ## Assert ##
@@ -86,12 +96,14 @@ public class HandsOn05Test extends UnitContainerTestCase {
         purchases.forEach(purchase -> {
             Member member = purchase.getMember().get();
             MemberAddress address = member.getMemberAddressAsValid().get();
+            // [tips] フォーマッターの少し空気読んで欲しいを、強引にやる方法 → // を後ろ付ける
             log("会員名称: " + member.getMemberName(),
                     "会員ステータス: " + member.getMemberStatusCode(),
                     "住所: " + address.getAddress(),
                     "地域名称: " + address.getRegion().get().getRegionName(),
                     "購入日時: " + purchase.getPurchaseDatetime()
             );
+            // TODO umeyan getRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
             assertTrue(address.getRegion().get().isRegionId千葉());
             assertTrue(purchase.isPaymentCompleteFlgTrue());
         });

@@ -90,7 +90,7 @@ public class HandsOn04Test extends UnitContainerTestCase {
         });
         // ## Assert ##
         assertHasAnyElement(members);
-        // TODO done umeyan そのassertが動いた保証を入れて欲しい by jflute (2025/04/22)
+        // done umeyan そのassertが動いた保証を入れて欲しい by jflute (2025/04/22)
         // (markHere()を使ってもOK: 使い方はjavadoc)
         members.stream().filter(
                 member -> !member.isMemberStatusCode退会会員()
