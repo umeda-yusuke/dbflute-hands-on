@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.docksidestage.handson.dbflute.exbhv.MemberAddressBhv;
-import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
 import org.docksidestage.handson.dbflute.exentity.MemberAddress;
 import org.docksidestage.handson.unit.UnitContainerTestCase;
