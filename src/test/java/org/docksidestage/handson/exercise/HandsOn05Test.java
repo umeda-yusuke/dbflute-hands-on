@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.docksidestage.handson.dbflute.allcommon.CDef;
 import org.docksidestage.handson.dbflute.exbhv.MemberAddressBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
@@ -88,8 +87,8 @@ public class HandsOn05Test extends UnitContainerTestCase {
             
             cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
             cb.query().setPaymentCompleteFlg_Equal_True();
-            // TODO umeyan queryRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
-            cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).queryRegion().setRegionId_Equal_千葉();
+            // TODO done umeyan queryRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
+            cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).setRegionId_Equal_千葉();
         });
         // ## Assert ##
         assertHasAnyElement(purchases);
@@ -103,8 +102,8 @@ public class HandsOn05Test extends UnitContainerTestCase {
                     "地域名称: " + address.getRegion().get().getRegionName(),
                     "購入日時: " + purchase.getPurchaseDatetime()
             );
-            // TODO umeyan getRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
-            assertTrue(address.getRegion().get().isRegionId千葉());
+            // TODO done umeyan getRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
+            assertTrue(address.isRegionId千葉());
             assertTrue(purchase.isPaymentCompleteFlgTrue());
         });
     }
