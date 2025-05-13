@@ -85,11 +85,16 @@ public class HandsOn05Test extends UnitContainerTestCase {
         List<Purchase> purchases = purchaseBhv.selectList(cb -> {
             cb.setupSelect_Member().withMemberStatus();
             
+            cb.query().queryMember().setMemberStatusCode_Equal_正式会員();
+            cb.query().queryMember().queryMemberStatus().setMemberStatusCode_Equal_正式会員();
             cb.setupSelect_Member().withMemberAddressAsValid(currentLocalDate()).withRegion();
             cb.query().setPaymentCompleteFlg_Equal_True();
-            // TODO done umeyan queryRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
+            // done umeyan queryRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
             cb.query().queryMember().queryMemberAddressAsValid(currentLocalDate()).setRegionId_Equal_千葉();
         });
+        // [1on1でのふぉろー]
+        // o queryRegion()まで行かなくてOKの仕組みの話をした
+        // o 仕組みを知ることで、便利/不便を思いつけるし、解決方法まで思いつける
         // ## Assert ##
         assertHasAnyElement(purchases);
         purchases.forEach(purchase -> {
@@ -102,7 +107,7 @@ public class HandsOn05Test extends UnitContainerTestCase {
                     "地域名称: " + address.getRegion().get().getRegionName(),
                     "購入日時: " + purchase.getPurchaseDatetime()
             );
-            // TODO done umeyan getRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
+            // done umeyan getRegion()まで行かなくてOK (MEMBER_ADDRESSがREGION_IDを持っているため) by jflute (2025/05/08)
             assertTrue(address.isRegionId千葉());
             assertTrue(purchase.isPaymentCompleteFlgTrue());
         });
